@@ -1,20 +1,10 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <v-app id="main-app-wrapper">
+      <Toolbar/>
+      <router-view></router-view>
+      <vue-metamask @onComplete="onComplete"></vue-metamask>
+    </v-app>
 </template>
-
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
-</script>
 
 <style>
 #app {
@@ -26,20 +16,34 @@ export default {
   margin-top: 60px;
 }
 </style>
-p>
-</template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import Toolbar from './components/Toolbar'
+import Home from './components/Home.vue'
+import VueRouter from 'vue-router'
+import Vue from 'vue'
+
+Vue.use(VueRouter)
+
+const routes = [
+  {path: "/", component: Home},
+  // {path: "*", component: NotFound}
+];
+const router = new VueRouter({
+  routes: routes,
+  mode: 'history',
+});
 
 export default {
   name: 'App',
+  router,
   components: {
-    HelloWorld
-  },
-  data () {
-    return {
-      //
+    Toolbar,
+    VueMetamask
+  }
+  methods: {
+    onComplete(data){
+      console.log('data:', data);
     }
   }
 }
