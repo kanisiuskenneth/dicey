@@ -2,7 +2,6 @@
     <v-app id="main-app-wrapper">
       <Toolbar/>
       <router-view></router-view>
-      <vue-metamask @onComplete="onComplete"></vue-metamask>
     </v-app>
 </template>
 
@@ -19,32 +18,28 @@
 
 <script>
 import Toolbar from './components/Toolbar'
-import Home from './components/Home.vue'
-import VueRouter from 'vue-router'
-import Vue from 'vue'
-
-Vue.use(VueRouter)
-
-const routes = [
-  {path: "/", component: Home},
-  // {path: "*", component: NotFound}
-];
-const router = new VueRouter({
-  routes: routes,
-  mode: 'history',
-});
-
+import VueMetamask from 'vue-metamask'
+import {mapActions} from 'vuex'
 export default {
   name: 'App',
-  router,
   components: {
     Toolbar,
     VueMetamask
-  }
+  },
+  data: () => ({
+
+  }),
+
   methods: {
-    onComplete(data){
-      console.log('data:', data);
-    }
+    ...mapActions({
+      boot: 'boot',
+    }),
+    updateEth(){
+        this.save()
+    },
+  },
+  mounted: function() {
+    this.boot()
   }
 }
 </script>

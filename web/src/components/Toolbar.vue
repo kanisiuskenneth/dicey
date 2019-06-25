@@ -1,29 +1,54 @@
 <template>
-    <v-toolbar dark color="secondary">
-        <v-toolbar-title class="white--text title">Dicey</v-toolbar-title>
-        <vue-metamask @onComplete="onComplete"></vue-metamask>
+    <v-toolbar dark color="" flat>
+        <router-link to="/">
+            <v-toolbar-title class="title white--text ">Distributed Service Registry</v-toolbar-title>
+        </router-link>
+        <v-spacer></v-spacer>
+        <v-toolbar-items>
+        <v-btn flat to="/service/new"><v-icon>add</v-icon>Register service</v-btn>
+
+        <v-tooltip bottom>
+
+            <template v-slot:activator="{ on }">
+
+                <v-btn flat>
+                      <div>
+                        {{balance}} ETH
+                    </div>
+                                &nbsp;&nbsp;&nbsp;
+
+                    <v-icon x-large>account_circle</v-icon>
+                </v-btn>
+            </template>
+            <span>tooltip</span>
+        </v-tooltip>
+
+
+        </v-toolbar-items>
     </v-toolbar>
 </template>
 
 <script>
-import VueMetamask from 'vue-metamask'
+import {mapState} from 'vuex';
 export default {
     name: "Toolbar",
-    components: {
-        VueMetamask
-    },
     methods: {
-        onComplete(data){
-            console.log('data:', data);
-            console.log(data.web3.eth.accounts[0])
-        }
+
+    },
+    computed: {
+      ...mapState({
+        balance: state => state.eth.balance,
+      })
     }
 }
 </script>
 
 <style>
+    a {
+        text-decoration: none!important;
+    }
     .title {
         font-size: 2rem;
-        color: white;
+        text-decoration: none;
     }
 </style>
