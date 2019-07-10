@@ -3,6 +3,7 @@ import ServiceRegistryContract from '../../../backend/build/contracts/ServiceReg
 export default {
     state: {
         account: "0x000",
+        router: {},
         balance: 0,
         contract: {},
         booted: false,
@@ -58,18 +59,19 @@ export default {
                 console.log(e)
             }
         },
-        async boot({commit}) {
+        async boot({commit}, router) {
             console.log("booting")
             commit('setBooted', false);
             if (window.ethereum) {
-                window.web3 = new Web3(ethereum);
+                console.log("HERE")
+                window.web3 = new Web3(window.ethereum, undefined, {transactionConfirmationBlocks: 1});
                 try {
                     await ethereum.enable();
                 } catch (error) {
                 }
             }
             else if (window.web3) {
-                window.web3 = new Web3(web3.currentProvider);
+                window.web3 = new Web3(web3.currentProvider, undefined, {transactionConfirmationBlocks: 1});
             }
             else {
                 console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
@@ -105,7 +107,10 @@ export default {
             commit('setLoading', true)
             try {
                 let res = await window.contract.methods.addService(...data).send();
+                await setTimeout(1000);
+                res = await window.contract.methods.getMyLatestServiceId().call();
                 console.log(res);
+                window.location.href="/service/"+res;
             } catch (e) {
                 console.log(e);
             } finally {
@@ -124,11 +129,11 @@ export default {
                 let service = {
                     generalInfo: res.generalInfo,
                     additionalInfo: JSON.parse(res.additionalInfo),
-                    isOwner: window.web3.eth.defaultAccount === res._owner,
+                    isOwner: window.web3.eth.defaultAccount == res.generalInfo.owner,
                     allowed: res.allowed,
                 }
                 if(res.allowed) {
-                    this.dispatch('getServiceDescription', serviceId)
+                    this.dispatch('getServiceDescription', {serviceId, undefined})
                 }
 
                 commit('setService', service)
@@ -138,10 +143,18 @@ export default {
                 commit('setLoading', false)
             }
         },
-        async getServiceDescription({commit}, serviceId) {
+        async getServiceDescription({commit}, {serviceId, version}) {
             commit('setLoading', true)
+            let desc;
+            console.log(serviceId, version)
             try {
-                let desc = await window.contract.methods.getServiceDescription(serviceId).call()
+                if(!version){
+                    desc = await window.contract.methods.getServiceDescription(serviceId).call()
+                }
+                else {
+                    desc = await window.contract.methods.getServiceDescription(serviceId, version).call()
+                }
+
                 console.log(desc)
                 commit('setServiceDescription', desc);
             } catch (e) {
@@ -162,6 +175,29 @@ export default {
             } finally {
                 commit('setLoading', false)
             }
+        },
+        async updateDescription({commit}, [id, fName, fContent, router]) {
+            commit('setLoading', true)
+            console.log(router)
+            try {
+                let update = await window.contract.methods.updateDescription(id, fName, fContent).send()
+                window.location.reload()
+            } catch (e) {
+                console.log(e)
+            } finally {
+                commit('setLoading', false)
+            }
+        },
+        async deleteService({commit}, id) {
+            try {
+                let del = await window.contract.methods.deleteService(id).send()
+                window.location.href = '/'
+            } catch (e) {
+                console.log(e)
+            } finally {
+                commit('setLoading', false)
+            }
         }
+
     }
 }
