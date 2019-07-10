@@ -38,7 +38,7 @@ export default {
         this.save()
     },
   },
-  mounted: function() {
+  created: function() {
     this.boot()
   }
 }

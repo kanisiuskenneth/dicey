@@ -1,7 +1,7 @@
 <template>
     <v-toolbar dark color="" flat>
         <router-link to="/">
-            <v-toolbar-title class="title white--text ">Distributed Service Registry</v-toolbar-title>
+            <v-toolbar-title class="title white--text ">Decentralized Service Registry</v-toolbar-title>
         </router-link>
         <v-spacer></v-spacer>
         <v-toolbar-items>
@@ -13,7 +13,7 @@
 
                 <v-btn flat>
                       <div>
-                        {{balance}} ETH
+                        {{Number(balance).toFixed(2)}} ETH
                     </div>
                                 &nbsp;&nbsp;&nbsp;
 
