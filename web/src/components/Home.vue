@@ -29,8 +29,8 @@
                   <td>{{ props.item.name }}</td>
                   <td >{{ props.item.category }}</td>
                   <td >{{ props.item.description.substring(0, 140) }} {{props.item.description.length > 140 ? "..." : ""}}</td>
-                  <!-- <td>{{ props.item._type }}</td> -->
                   <td>{{props.item.price != 0? toEther(props.item.price) + " ETH": "Free"}}</td>
+                  <td>{{ props.item.rating }}</td>
                   <td > <router-link :to="`/service/${props.item.id}`">
                   <v-btn icon><v-icon>search</v-icon></v-btn></router-link></td>
                 </tr>
@@ -73,6 +73,12 @@
             align: 'left',
             sortable: true,
             value: 'price'
+          },
+          {
+            text: 'Rating',
+            align: 'left',
+            sortable: true,
+            value: 'rating'
           },
           {
             text: 'Explore',

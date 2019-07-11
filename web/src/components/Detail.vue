@@ -121,6 +121,50 @@
                     </v-flex>
                 </v-flex>
             </v-layout>
+            <v-layout v-else-if="!service.isOwner && service.allowed">
+                <v-flex class="offset-xs1 mt-4 xs10">
+                    <h3>
+                        Rating
+                    </h3>
+                    <div style="border: 1px solid black; padding: 10px; width: 100%;">
+                            <v-layout class="row">
+                                <v-flex xs2>
+                                    <b>Total Rating</b>
+                                </v-flex>
+                                <v-flex>
+                                    {{service.rating}}
+                                </v-flex>
+                            </v-layout>
+                              <v-layout class="row">
+                                <v-flex xs2 align-center d-flex>
+                                    <b>Your Rate</b>
+                                </v-flex>
+                                <template v-if="userRate == 0" >
+                                <v-flex xs5 >
+                                     <v-slider
+                                        v-model="rate"
+                                        :thumb-size="24"
+                                        thumb-label="always"
+                                        max=10
+                                        min=1
+                                        ></v-slider>
+                                </v-flex>
+                                <v-flex xs3>
+                                    <v-btn color="primary" @click="submitRate">
+                                        Submit
+                                    </v-btn>
+                                </v-flex>
+                                </template>
+                                <template v-else>
+                                    <v-flex class="xs5">
+                                        {{userRate/100}}
+                                    </v-flex>
+                                </template>
+                            </v-layout>
+
+                    </div>
+                </v-flex>
+            </v-layout>
         </div>
         <div v-else>
             <v-layout row justify-center><v-progress-circular indeterminate/></v-layout>
@@ -140,13 +184,13 @@ export default {
             ["Owner", "owner"],
             ["Category", "category"],
             ["Description", "description"],
-
         ],
         versions: [],
         selectedVersion: 0,
         download: "",
         fileName: "",
         fileContent: "",
+        rate: 1,
     }),
     computed: {
         ...mapState({
@@ -155,6 +199,7 @@ export default {
             description: state => state.eth.serviceDescription,
             loading: state => state.eth.loading,
             serviceDescriptionMethods: state => state.eth.serviceDescriptionMethods,
+            userRate: state => state.eth.userRate
         })
     },
     methods: {
@@ -163,7 +208,9 @@ export default {
             payService: 'payService',
             updateDescription: 'updateDescription',
             getDescription: 'getServiceDescription',
-            deleteService: 'deleteService'
+            deleteService: 'deleteService',
+            getUserRate: 'getUserRate',
+            rateService: 'rateService'
         }),
         saveFile: function() {
             const data = this.description.fileContent;
@@ -203,6 +250,9 @@ export default {
             }
 
         },
+        submitRate() {
+            this.rateService([this.$route.params.id, this.rate])
+        },
         changeVersion: function(val) {
             this.getDescription({serviceId: this.$route.params.id, version: val})
         },
@@ -219,6 +269,7 @@ export default {
     watch: {
         booted: function() {
             this.fetch(this.$route.params.id)
+            this.getUserRate(this.$route.params.id)
         },
         description: function(val) {
             if (this.latestVersion == 0) {

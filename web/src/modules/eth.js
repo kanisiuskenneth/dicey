@@ -14,7 +14,8 @@ export default {
             {text: "WSDL File", value: "IDL"},
             // {text: "RESTful HTTP", value:"REST"}
         ],
-        serviceDescription: {}
+        serviceDescription: {},
+        userRate: null,
     },
     mutations: {
         setContext(state, ctx) {
@@ -43,6 +44,9 @@ export default {
         },
         setServiceDescription(state, description) {
             state.serviceDescription = description
+        },
+        setUserRate(state, rate) {
+            state.userRate = rate
         }
     },
     actions: {
@@ -93,6 +97,15 @@ export default {
             if(window.contract) {
                 try {
                     let res = await window.contract.methods.getAllServices().call();
+                    let services = res[1];
+                    for(let i=0;i<services.length;i++) {
+                        if(services[i].ratingCount != 0) {
+                            services[i].rating = services[i].ratingTotal/(services[i].ratingCount*100);
+                        } else {
+                            services[i].rating = "N/A";
+                        }
+
+                    }
                     commit('setServices', res[1]);
                 } catch (e) {
                     console.log(e);
@@ -129,6 +142,7 @@ export default {
                 let service = {
                     generalInfo: res.generalInfo,
                     additionalInfo: JSON.parse(res.additionalInfo),
+                    rating: res.generalInfo.ratingCount != 0 ? res.generalInfo.ratingTotal/(res.generalInfo.ratingCount*100) : 0,
                     isOwner: window.web3.eth.defaultAccount == res.generalInfo.owner,
                     allowed: res.allowed,
                 }
@@ -196,6 +210,26 @@ export default {
                 console.log(e)
             } finally {
                 commit('setLoading', false)
+            }
+        },
+        async getUserRate({commit}, id) {
+            try {
+                let rate = await window.contract.methods.getUserRate(id).call()
+                commit('setUserRate', rate);
+            } catch (e) {
+                console.log(e);
+            } finally {
+
+            }
+        },
+        async rateService({commit}, data) {
+            try {
+                let res = await window.contract.methods.rateService(...data).send()
+                window.location.reload();
+            } catch (e) {
+                console.log(e);
+            } finally {
+
             }
         }
 
