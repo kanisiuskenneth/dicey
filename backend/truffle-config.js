@@ -52,10 +52,10 @@ module.exports = {
     advanced: {
       host: "167.205.34.152",
       port: 8545,             // Custom port
-      network_id: 13515,       // Custom network
+      network_id: "*",       // Custom network
       gas: 7500000,           // Gas sent with each transaction (default: ~6700000)
       gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
-      from: "0x4C827501E51d778BC753194FE0a7025bACFFE7c8",        // Account to send txs from (default: accounts[0])
+      from: "0x69ac2716835c75e7181b9fe4f1d1e6c4c4cbf8d9",        // Account to send txs from (default: accounts[0])
       websocket: true,
     },
 

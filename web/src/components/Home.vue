@@ -3,6 +3,8 @@
           <!--<v-form @submit.prevent="submit">-->
     <v-layout justify-center row>
         <v-flex xs10>
+          <form @submit.prevent="submitted">
+
           <v-text-field
             single-line
             outline
@@ -10,19 +12,21 @@
             placeholder="Search Service"
             append-icon="search"
             v-model="search"
+            @click:append="submitted"
             >
           </v-text-field>
+          </form>
         </v-flex>
     </v-layout>
           <!--</v-form>-->
       <v-layout class="row">
           <v-flex class="xs10 offset-xs1">
           <v-data-table
+                  v-if="!loading"
                   :headers="headers"
                   :items="services"
                   loading="true"
                   class="elevation-1"
-                  :search="search"
           >
               <template v-slot:items="props">
                 <tr>
@@ -36,6 +40,11 @@
                 </tr>
               </template>
           </v-data-table>
+          <v-layout row v-else>
+             <v-progress-linear
+              :indeterminate="true"
+            ></v-progress-linear>
+          </v-layout>
           </v-flex>
 
       </v-layout>
@@ -92,6 +101,8 @@
         loading: state => state.eth.loading,
         services: state => state.eth.services,
         booted: state => state.eth.booted,
+
+
       })
     },
     watch: {
@@ -104,10 +115,14 @@
     },
     methods: {
       ...mapActions({
-        fetch: 'getAllServices'
+        fetch: 'getAllServices',
+        find: 'findServices'
       }),
       toEther: (val) => {
         return window.web3.utils.fromWei(val+"", "ether");
+      },
+      submitted() {
+        this.find(this.search);
       }
     },
     mounted: function() {

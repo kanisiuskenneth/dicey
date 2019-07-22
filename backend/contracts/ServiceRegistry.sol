@@ -24,7 +24,7 @@ contract ServiceRegistry {
 
 
   uint64 serviceCount;
-  uint64 i;
+  uint64 idx;
 
   mapping(uint64 => uint64) indexes;
   mapping(uint64 => string) additionalInfos;
@@ -33,32 +33,91 @@ contract ServiceRegistry {
   mapping(address => mapping(uint64 => bool)) acl;
   mapping(address => uint[]) public myservices;
 
-  address owner = msg.sender;
+  address public owner = msg.sender;
 
   constructor() public {
     serviceCount = 0;
-    i = 0;
+    idx = 0;
+  }
+  function toLower(string memory str) public pure returns(string memory) {
+    bytes memory src = bytes (str);
+    bytes memory des = new bytes(src.length);
+    for(uint i = 0; i < src.length; i++) {
+      if(src[i] >= 'A' && src[i] <= 'Z') {
+        des[i] = byte(uint8(src[i])+32);
+      } else {
+        des[i] = src[i];
+      }
+    }
+    return string(des);
+  }
+  function contains (string memory pattern, string memory text) public pure returns(bool) {
+      bytes memory patternBytes = bytes (pattern);
+      bytes memory textBytes = bytes (text);
+      bool found = false;
+      if(patternBytes.length > textBytes.length) return false;
+      for (uint i = 0; i <= textBytes.length - patternBytes.length; i++) {
+          bool flag = true;
+          for (uint j = 0; j < patternBytes.length; j++) {
+              if (textBytes [i + j] != patternBytes [j]) {
+                  flag = false;
+                  break;
+              }
+          }
+          if (flag) {
+              found = true;
+              break;
+          }
+      }
+      return found;
   }
 
 
   function addService(string memory _name, string memory _category, string memory _description, uint _price, string memory additionalInfo, string memory fileName, string memory fileContent)  public returns (Service memory){
-    Service memory created = Service(i, msg.sender, _name, _category, _description, _price, 0,0,now);
+    Service memory created = Service(idx, msg.sender, _name, _category, _description, _price, 0,0,now);
     services.push(created);
-    indexes[i] = serviceCount;
-    myservices[msg.sender].push(i);
+    indexes[idx] = serviceCount;
+    myservices[msg.sender].push(idx);
     serviceCount++;
     if(bytes(additionalInfo).length != 0x0) {
-      additionalInfos[i] = additionalInfo;
+      additionalInfos[idx] = additionalInfo;
     }
-    descriptions[i].push(ServiceDescription(1, fileName, fileContent, now));
-    i++;
+    descriptions[idx].push(ServiceDescription(1, fileName, fileContent, now));
+    idx++;
     return (created);
   }
-  function getMyLatestServiceId() public returns (uint) {
+  function getMyLatestServiceId() public view returns (uint) {
     return myservices[msg.sender][myservices[msg.sender].length-1];
   }
   function getAllServices() public view returns(uint64, Service[] memory) {
     return (serviceCount, services);
+  }
+  function getAllServices(uint64 size, uint64 page) public view returns(uint, Service[] memory) {
+    uint64 start = page*size;
+    Service[] memory ret = new Service[](size);
+    uint upperbound  = (page*size)+size > services.length? services.length-(page*size) : size;
+    for(uint i = 0; i < upperbound; i++) {
+      ret[i] = services[start+i];
+    }
+    return (upperbound, ret);
+  }
+  //Workaround for truffle test not supporting function overloading
+  function getAllServicesPaged(uint64 size, uint64 page) public view returns(uint, Service[] memory) {
+    return getAllServices(size,page);
+  }
+  function findServices(string memory query) public view returns (uint, Service[] memory) {
+    Service[] memory ret = new Service[](50);
+    uint count=0;
+    string memory lower = toLower(query);
+    for(uint j = 0; j < services.length; j++) {
+      Service memory service = services[j];
+      if (contains(lower,toLower(service.name))|| contains(lower, toLower(service.description)) || contains(lower, toLower(service.category))) {
+        ret[count] = service;
+        count++;
+        if(count == 50) break;
+      }
+    }
+    return (count, ret);
   }
   function getServiceDetail(uint64 id) public view returns(Service memory generalInfo, string memory additionalInfo, bool allowed) {
     uint64 index = indexes[id];
@@ -71,13 +130,16 @@ contract ServiceRegistry {
     require(allowed, "Access not allowed");
     return (descriptions[id][descriptions[id].length-1]);
   }
-  function getServiceDescription(uint64 id, uint version) public view returns(ServiceDescription memory serviceDesciption) {
+  function getServiceDescription(uint64 id, uint64 version) public view returns(ServiceDescription memory serviceDesciption) {
     uint64 index = indexes[id];
     bool allowed = acl[msg.sender][id] || services[index].owner == msg.sender || services[index].price == 0;
     require(allowed, "Access not allowed");
-    require(version <= descriptions[id].length);
+    require(version <= descriptions[id].length && version > 0);
     return (descriptions[id][version-1]);
-
+  }
+  //Workaround for truffle test not supporting function overloading
+  function getServiceDescriptionSpec(uint64 id, uint64 version) public view returns(ServiceDescription memory serviceDescription) {
+    return getServiceDescription(id,version);
   }
 
   function deleteService(uint64 id) public {
@@ -94,6 +156,7 @@ contract ServiceRegistry {
   function payForService(uint64 id) payable public {
     uint64 index = indexes[id];
     Service memory service = services[index];
+    require(!(acl[msg.sender][id] || services[index].owner == msg.sender || services[index].price == 0));
     require(msg.value >= service.price, "Value not right!");
     service.owner.transfer(service.price);
     acl[msg.sender][id] = true;
@@ -109,19 +172,19 @@ contract ServiceRegistry {
   function rateService(uint64 id, uint64 rate) public {
     uint64 index = indexes[id];
     bool allowed = (acl[msg.sender][id] || services[index].price == 0) && services[index].owner != msg.sender;
+    require(rate >= 1 && rate <= 10);
     require(allowed, "Access not allowed");
-    uint64 val = rate*100;
     if(userRate[id][msg.sender] == 0) {
-      services[index].ratingTotal += val;
+      services[index].ratingTotal += rate;
       services[index].ratingCount++;
-      userRate[id][msg.sender] = val;
+      userRate[id][msg.sender] = rate;
     } else {
       services[index].ratingTotal -= userRate[id][msg.sender];
-      services[index].ratingTotal += val;
-      userRate[id][msg.sender] = val;
+      services[index].ratingTotal += rate;
+      userRate[id][msg.sender] = rate;
     }
   }
-  function getUserRate(uint64 id) public returns (uint64) {
+  function getUserRate(uint64 id) public view returns (uint64) {
     return userRate[id][msg.sender];
   }
 }

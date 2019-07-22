@@ -96,8 +96,8 @@ export default {
             commit('setLoading', true)
             if(window.contract) {
                 try {
-                    let res = await window.contract.methods.getAllServices().call();
-                    let services = res[1];
+                    let res = await window.contract.methods.getAllServices(20, 0).call();
+                    let services = res[1].slice(0,res[0]);
                     for(let i=0;i<services.length;i++) {
                         if(services[i].ratingCount != 0) {
                             services[i].rating = services[i].ratingTotal/(services[i].ratingCount*100);
@@ -106,7 +106,7 @@ export default {
                         }
 
                     }
-                    commit('setServices', res[1]);
+                    commit('setServices', services);
                 } catch (e) {
                     console.log(e);
                 }finally {
@@ -115,6 +115,28 @@ export default {
             }
 
             console.log("Finish Fetching...")
+        },
+        async findServices({commit}, data) {
+            commit('setLoading', true)
+            if(window.contract) {
+                try {
+                    let res = await window.contract.methods.findServices(data).call();
+                    let services = res[1].slice(0,res[0]);
+                    for(let i=0;i<services.length;i++) {
+                        if(services[i].ratingCount != 0) {
+                            services[i].rating = services[i].ratingTotal/(services[i].ratingCount*100);
+                        } else {
+                            services[i].rating = "N/A";
+                        }
+
+                    }
+                    commit('setServices', services);
+                } catch (e) {
+                    console.log(e);
+                }finally {
+                    commit('setLoading', false)
+                }
+            }
         },
         async addService({commit}, data) {
             commit('setLoading', true)
