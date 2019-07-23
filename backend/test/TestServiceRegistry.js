@@ -295,7 +295,18 @@ contract('ServiceRegistry', (accounts) => {
                 assert.equal(detail.generalInfo.ratingCount, 1);
                 assert.equal(detail.generalInfo.ratingTotal, 5);
             })
-
+        })
+        describe('getUserRate', () => {
+            it('should return 0 when user never rate the service', async() => {
+                const contract  = await SR.deployed();
+                let rate = await contract.getUserRate(0, {from: accounts[5]});
+                assert.equal(rate, 0)
+            })
+            it('should return user rate when user already rate the service', async () => {
+                const contract = await SR.deployed();
+                let rate = await contract.getUserRate(1, {from: accounts[1]});
+                assert.equal(rate, 5);
+            })
         })
 
     })
