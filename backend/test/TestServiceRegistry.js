@@ -21,7 +21,7 @@ contract('ServiceRegistry', (accounts) => {
                 const result = await contract.toLower(src);
                 assert.equal(result, src);
             });
-            it('should return lowercased string when input arbritrary string', async () => {
+            it('should return lowercased string when input arbitrary string', async () => {
                 const contract = await SR.deployed();
                 const src = "This is a Test String";
                 const result = await contract.toLower(src);
