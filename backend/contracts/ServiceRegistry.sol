@@ -51,15 +51,55 @@ contract ServiceRegistry {
     }
     return string(des);
   }
-  function contains (string memory pattern, string memory text) public pure returns(bool) {
-      bytes memory patternBytes = bytes (pattern);
-      bytes memory textBytes = bytes (text);
-      bool found = false;
-      if(patternBytes.length > textBytes.length) return false;
-      for (uint i = 0; i <= textBytes.length - patternBytes.length; i++) {
+  function contains (string memory _pattern, string memory _text) public pure returns(bool) {
+      bytes memory pattern = bytes (_pattern);
+      bytes memory text = bytes (_text);
+    //   uint M = pattern.length;
+    //   uint N = text.length;
+    //   uint p = 0; // hash value for pattern
+    //   uint t = 0; // hash value for txt
+    //   uint h = 1;
+    //   uint i;
+    //   uint j;
+    //   uint q = 101;
+    //   bool found = false;
+    //   uint d = 256;
+    //   if(pattern.length == 0) {
+    //     return true;
+    //   } else if (pattern.length > text.length) {
+    //     return false;
+    //   }
+    //   for (i = 0; i < M-1; i++)
+    //     h = (h*d)%q;
+    //   for (i = 0; i < M; i++) {
+    //     p = (d*p + uint8(pattern[i]))%q;
+    //     t = (d*t + uint8(text[i]))%q;
+    //   }
+    //    for (i = 0; i <= N - M; i++) {
+    //       if ( p == t ) {
+    //         for (j = 0; j < M; j++) {
+    //             if (text[i+j] != pattern[j])
+    //                 break;
+    //         }
+    //         if (j == M){
+    //           found = true;
+    //           break;
+    //         }
+
+    //     }
+    //     if ( i < N-M ) {
+    //         t = (d*(t - uint8(text[i])*h) + uint8(text[i+M]))%q;
+    //         if (t < 0)
+    //         t = (t + q);
+    //     }
+    // }
+    bool found = false;
+
+      if(pattern.length > text.length) return false;
+      for (uint i = 0; i <= text.length - pattern.length; i++) {
           bool flag = true;
-          for (uint j = 0; j < patternBytes.length; j++) {
-              if (textBytes [i + j] != patternBytes [j]) {
+          for (uint j = 0; j < pattern.length; j++) {
+              if (text [i + j] != pattern [j]) {
                   flag = false;
                   break;
               }
