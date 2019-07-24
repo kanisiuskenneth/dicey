@@ -103,7 +103,7 @@ contract('ServiceRegistry', (accounts) => {
             })
         })
         describe('findServices', () => {
-            it('should return return all services when query empty', async () => {
+            it('should return all services when query empty', async () => {
                 const contract = await SR.deployed() ;
                 let res = await contract.findServices("");
                 assert.equal(res[0], 13);
