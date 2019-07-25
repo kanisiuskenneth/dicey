@@ -51,8 +51,8 @@ module.exports = {
 
     // Another network with more advanced options...
     advanced: {
-      provider: new PrivateKeyProvider(privateKey, "http://127.0.0.1:8545"),
-      host: "127.0.0.1",
+      provider: new PrivateKeyProvider(privateKey, "http://167.205.34.77:8545"),
+      host: "167.205.34.77",
       port: 8545,             // Custom port
       network_id: 135,       // Custom network
       gas: 8000000,           // Gas sent with each transaction (default: ~6700000)
