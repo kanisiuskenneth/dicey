@@ -52,12 +52,12 @@ module.exports = {
     // Another network with more advanced options...
     advanced: {
       provider: new PrivateKeyProvider(privateKey, "http://127.0.0.1:8545"),
-      // host: "167.205.34.78",
-      // port: 8545,             // Custom port
+      host: "127.0.0.1",
+      port: 8545,             // Custom port
       network_id: 135,       // Custom network
       gas: 8000000,           // Gas sent with each transaction (default: ~6700000)
       gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
-      // from: "0xAb8D5eF0d7aD8Fc1bB0970bbd9d895f4553Ba269",        // Account to send txs from (default: accounts[0])
+      // from: "0xAb8D5eFttr0d7aD8Fc1bB0970bbd9d895f4553Ba269",        // Account to send txs from (default: accounts[0])
       websocket: true,
     },
 
