@@ -9,7 +9,8 @@ const Contract = require('./build/contracts/ServiceRegistry.json');
 const service  = [
     "Sample Service",
     "Sample",
-	"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nisi erat, fringilla at orci vitae, sagittis mollis augue. Nullam interdum molestie metus et maximus. Mauris nunc enim, venenatis vel tortor eu, venenatis ullamcorper leo. Nam ac lacinia augue. Praesent pulvinar nulla ac lacus auctor, sit amet suscipit orci condimentum. Nunc ipsum libero, semper ac dolor et, convallis facilisis est. Suspendisse commodo urna ac tristique blandit. Curabitur vehicula justo non congue pharetra. Cras vitae nisl mollis, interdum libero non, iaculis ipsum. Nunc viverra vestibulum nunc, et molestie elit aliquet sit amet.",
+	//"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nisi erat, fringilla at orci vitae, sagittis mollis augue. Nullam interdum molestie metus et maximus. Mauris nunc enim, venenatis vel tortor eu, venenatis ullamcorper leo. Nam ac lacinia augue. Praesent pulvinar nulla ac lacus auctor, sit amet suscipit orci condimentum. Nunc ipsum libero, semper ac dolor et, convallis facilisis est. Suspendisse commodo urna ac tristique blandit. Curabitur vehicula justo non congue pharetra. Cras vitae nisl mollis, interdum libero non, iaculis ipsum. Nunc viverra vestibulum nunc, et molestie elit aliquet sit amet.",
+	"This is a sample service description",
     100000000000000,
     "",
     "sample.wsdl",
