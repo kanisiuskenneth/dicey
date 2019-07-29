@@ -19,9 +19,13 @@ const service  = [
 const Web3js = require('web3');
 const PrivateKeyProvider = require('truffle-privatekey-provider');
 const SR = require('./build/contracts/ServiceRegistry.json')
-const provider = new PrivateKeyProvider(process.env.ETH_PRIVATE_KEY, "http://127.0.0.1:8545");
+const provider = new PrivateKeyProvider(process.env.ETH_PRIVATE_KEY, "http://167.205.34.77:8545");
 const web3 = new Web3js(provider);
 const bar = new _cliProgress.Bar({}, _cliProgress.Presets.shades_classic);
+
+var util  = require('util')
+let spawn = require('child_process').spawn
+
 
 const run = async () => {
     console.log("[Preparing]")
@@ -37,7 +41,7 @@ const run = async () => {
     // console.log(await contract.methods.getAllServices().call())
     var start = new Date().getTime();
     let n = 1;
-    prompts({type: "text", message: "1 entry, Continue?"})
+    await prompts({type: "text", message: "1 entry, Continue?"})
     bar.start(n, 0);
     for(let i = 0; i < n; i++) {
         await contract.methods.addService(...service).send({from: acc});
@@ -46,7 +50,7 @@ const run = async () => {
     bar.stop();
 
     n = 9
-    prompts({type: "text", message: "10 entry, Continue?"})
+    await prompts({type: "text", message: "10 entry, Continue?"})
     bar.start(n, 0);
     for(let i = 0; i < n; i++) {
         await contract.methods.addService(...service).send({from: acc});
@@ -55,7 +59,7 @@ const run = async () => {
     bar.stop()
 
     n = 90
-    prompts({type: "text", message: "100 entry, Continue?"})
+    await prompts({type: "text", message: "100 entry, Continue?"})
     bar.start(n, 0);
     for(let i = 0; i < n; i++) {
         await contract.methods.addService(...service).send({from: acc});
@@ -64,7 +68,7 @@ const run = async () => {
     bar.stop()
 
     n = 900
-    prompts({type: "text", message: "1000 entry, Continue?"})
+    await prompts({type: "text", message: "1000 entry, Continue?"})
     bar.start(n, 0);
     for(let i = 0; i < n; i++) {
         await contract.methods.addService(...service).send({from: acc});
