@@ -3,7 +3,7 @@ const _cliProgress = require('cli-progress');
 
 // const truffleAssert = require('truffle-assertions');
 var fs = require('fs');
-var wsdl = fs.readFileSync('sample.wsdl', 'utf8');
+var wsdl = fs.readFileSync('./performance_test/sample.wsdl', 'utf8');
 
 const Contract = require('./build/contracts/ServiceRegistry.json');
 const service  = [

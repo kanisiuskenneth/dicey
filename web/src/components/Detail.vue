@@ -157,7 +157,7 @@
                                 </template>
                                 <template v-else>
                                     <v-flex class="xs5">
-                                        {{userRate/100}}
+                                        {{userRate}}
                                     </v-flex>
                                 </template>
                             </v-layout>

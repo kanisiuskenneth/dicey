@@ -23,8 +23,11 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
+if(!process.env.ETH_PRIVATE_KEY) {
+  process.env.ETH_PRIVATE_KEY = "3d8903d6305b1297a24cf405bc510fa937ce4f86df73b91fbe4c61e5407a9ae1" //test account
+}
 var PrivateKeyProvider = require("truffle-privatekey-provider");
-var privateKey = process.env.ETH_PRIVATE_KEY;
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -51,7 +54,7 @@ module.exports = {
 
     // Another network with more advanced options...
     advanced: {
-      provider: new PrivateKeyProvider(privateKey, "http://167.205.34.77:8545"),
+      provider: new PrivateKeyProvider(process.env.ETH_PRIVATE_KEY, "http://167.205.34.77:8545"),
       //host: "127.0.0.1",
       //port: 8545,             // Custom port
       network_id: 135,       // Custom network

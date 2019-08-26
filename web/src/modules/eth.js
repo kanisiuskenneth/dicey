@@ -100,7 +100,7 @@ export default {
                     let services = res[1].slice(0,res[0]);
                     for(let i=0;i<services.length;i++) {
                         if(services[i].ratingCount != 0) {
-                            services[i].rating = services[i].ratingTotal/(services[i].ratingCount*100);
+                            services[i].rating = (services[i].ratingTotal/services[i].ratingCount);
                         } else {
                             services[i].rating = "N/A";
                         }
@@ -124,7 +124,7 @@ export default {
                     let services = res[1].slice(0,res[0]);
                     for(let i=0;i<services.length;i++) {
                         if(services[i].ratingCount != 0) {
-                            services[i].rating = services[i].ratingTotal/(services[i].ratingCount*100);
+                            services[i].rating = services[i].ratingTotal/(services[i].ratingCount);
                         } else {
                             services[i].rating = "N/A";
                         }
@@ -164,7 +164,7 @@ export default {
                 let service = {
                     generalInfo: res.generalInfo,
                     additionalInfo: JSON.parse(res.additionalInfo),
-                    rating: res.generalInfo.ratingCount != 0 ? res.generalInfo.ratingTotal/(res.generalInfo.ratingCount*100) : 0,
+                    rating: res.generalInfo.ratingCount != 0 ? res.generalInfo.ratingTotal/(res.generalInfo.ratingCount) : 0,
                     isOwner: window.web3.eth.defaultAccount == res.generalInfo.owner,
                     allowed: res.allowed,
                 }
